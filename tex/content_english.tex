@@ -1,6 +1,6 @@
 \section{Motivation and Problem}
 
-Especially with the development of hardware accelerated raytracing, Monte Carlo pathtracing has become increasingly popular to simulate realistic lighting and is slowly reaching realtime adoption.
+With the development of hardware accelerated raytracing, Monte Carlo pathtracing has become increasingly popular to simulate realistic lighting and is slowly reaching realtime adoption.
 However, the biggest problem with Monte Carlo pathtracing is high variance, resulting from the stochastic nature of the algorithm.
 This variance is especially apparent in early iterations of the algorithm and complex indirect lighting scenarios.
 
@@ -11,10 +11,10 @@ With the improvements made on this method in their follow-up paper (\cite{muller
 
 However, in the paper the authors limit the generation of training data to paths cast from the camera into the scene.
 This is a limitation, as light sampling converges faster in scenes with indirect lighting and caustics, where with unidirectional pathtracing the probability of finding such paths is close to zero.
-However, as the use of a radiance cache frees us from the need to connect paths back to the camera, we can also sample light paths without worrying about connection strategies, which pose a problem in bidirectional pathtracing.
+However, as the use of a radiance cache frees us from the need to connect paths back to the camera, we can also sample light paths to enrich the training data. %without worrying about connection strategies, which pose a problem in bidirectional pathtracing.
 
 
-In this thesis, I want to explore the possibility of integrating bidirectional pathtracing into the neural radiance caching algorithm to improve training in indirect- and caustic-heavy scenes.
+In this thesis, I want to explore the possibility of integrating bidirectional training into the neural radiance caching algorithm to improve training in indirect- and caustic-heavy scenes.
 
 \section{Related Work}
 
@@ -39,9 +39,8 @@ Furthermore, they employ self learning on the training paths to improve the qual
 
 
 I would like to extend this idea by mixing paths into the training data, which are cast from the light sources into the scene.
-In contrast to bidirectional pathtracing (\cite{veach1995}), we do not need to connect these paths back to the camera, as we simply store the outgoing radiance information per bounce.
-
-
+%In contrast to bidirectional pathtracing (\cite{veach1995}), 
+We do not need to connect these paths back to the camera, as we can simply store the outgoing radiance information per bounce.
 Unfortunately though, mixing these training sets is not trivial without inducing unwanted bias, as we have to respect the different sampling probabilities of these strategies.
 For this to work, we would have to investigate either heuristic changes to the training process or explicit weighting of the training data.
 
