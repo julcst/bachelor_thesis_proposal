@@ -1,0 +1,92 @@
+\section{Motivation and Problem}
+
+Especially with the development of hardware accelerated raytracing, Monte Carlo pathtracing has become increasingly popular to simulate realistic lighting and is slowly reaching realtime adoption.
+However, the biggest problem with Monte Carlo pathtracing is high variance, resulting from the stochastic nature of the algorithm.
+This variance is especially apparent in early iterations of the algorithm and complex indirect lighting scenarios.
+
+
+To combat early iteration noise, radiance caching can be utilized, which keeps radiance information from previous views around for further reuse.
+A notable example of this is the work of \textcite{muller2021}, who proposed to overfit a neural network to radiance information collected during pathtracing.
+With the improvements made on this method in their follow-up paper (\cite{muller2022}), they achieved promising cache-quality and performance results.
+
+However, in the paper the authors limit the generation of training data to paths cast from the camera into the scene.
+This is a limitation, as light sampling converges faster in scenes with indirect lighting and caustics, where with unidirectional pathtracing the probability of finding such paths is close to zero.
+However, as the use of a radiance cache frees us from the need to connect paths back to the camera, we can also sample light paths without worrying about connection strategies, which pose a problem in bidirectional pathtracing.
+
+
+In this thesis, I want to explore the possibility of integrating bidirectional pathtracing into the neural radiance caching algorithm to improve training in indirect- and caustic-heavy scenes.
+
+\section{Related Work}
+
+Various forms of radiance caching have been proposed in the past, reaching back to the work of \textcite{ward1988}.
+
+
+Some of these, like light mapping (\cite{arvo1986}) and irradiance probes(\cite{greger1998}), are already widely adopted in realtime applications like games (\cite{oat2005, abrash1996}), but mostly limited to static scenes and lighting.
+Other approaches utilize kd-trees to store photon density information (\cite{jensen1996}).
+
+
+More recently, \textcite{ouyang2021} achieved realtime online path reuse with temporal and spatial reservoirs.
+
+
+In this thesis, I would like to try to build upon the biased approach of \textcite{muller2021} and \textcite{muller2022}, who proposed a radiance caching algorithm based on neural networks.
+Specifically, I want to explore the possibility to integrate the ideas of \cite{arvo1986} into their algorithm.
+
+\section{Solution}
+
+In their paper, \textcite{muller2021} cast training paths from the camera to the light sources and collect radiance information at every bounce, which they feed into a neural network.
+In the next step they cast short inference paths for every pixel, which they terminate into the learned radiance field.
+Furthermore, they employ self learning on the training paths to improve the quality of the training data.
+
+
+I would like to extend this idea by mixing paths into the training data, which are cast from the light sources into the scene.
+In contrast to bidirectional pathtracing (\cite{veach1995}), we do not need to connect these paths back to the camera, as we simply store the outgoing radiance information per bounce.
+
+
+Unfortunately though, mixing these training sets is not trivial without inducing unwanted bias, as we have to respect the different sampling probabilities of these strategies.
+For this to work, we would have to investigate either heuristic changes to the training process or explicit weighting of the training data.
+
+\section{Evaluation}
+
+I want to evaluate the performance and convergence rate of a reference pathtracer, utilizing stratified sampling and multiple importance sampling, against the Neural Radiance Caching algorithm proposed by \textcite{muller2021} and the bidirectional training extension.
+For that, I will focus on scenes with a lot of indirect lighting and caustics, where the variance is usually very high and the hope is that bidirectional training will gain an advantage.
+
+To quantify the results, I will measure variance, bias and runtime of the three algorithms at different sample counts and training iterations, compared to a converged output of the reference pathtracer.
+
+It will be interesting to analyze the advantages of the improvements made in the follow-up paper (\cite{muller2022}) and how they apply to the bidirectional extension.
+Furthermore, I want to analyze if the extension with bidirectional training requires changes to the network architecture or the training process.
+For example, it might be interesting to add further features to the network input that correlate with caustics.
+
+As caustics mainly occur on diffuse surfaces, it might be interesting to separate diffuse and specular surfaces in the training and inference phase, either by features or the usage of different networks.
+Specifically, \textcite{muller2021} input the outgoing light direction into the network by encoding it as a mixture of Gaussians in spherical coordinates (one-blob encoding from \cite{muller2019}).
+This is a continuous generalization of the one-hot encoding.
+To disable this encoding for diffuse surfaces, one could try to equally weight these Gaussians.
+
+Another interesting aspect to analyze is the optimal ratio of light and camera training paths and if it differs between scenes.
+
+%Additionally, it could also prove interesting to reproduce the results of \textcite{muller2021} and \textcite{muller2022} as they only provide limited implementation details and evaluate their algorithm on more powerful hardware.
+
+I will implement these three algorithms from scratch in CUDA, using the OptiX framework, and evaluate them on a consumer-level RTX3060 Ti GPU, which has high adoption in current desktop systems.
+The hope is, to achieve realtime performance of 30 FPS or higher at 1080p resolution, while keeping the variance low enough to produce usable images.
+
+\section{Extension Point}
+
+If there should be any time left, one could evaluate if the integration of ReSTIR, which was also implemented into the paper by \textcite{muller2021}, makes a difference in the convergence speed of the radiance cache.
+Also, the benefits of additional screen space denoising could be explored.
+
+It could also prove interesting to compare different heuristics for the inference path termination.
+
+\section{Timeline}
+
+\begin{figure}
+\begin{chronology}[2]{0}{20}{\textwidth}
+  \event[0]{4}{Implement the reference pathtracer and NRC}
+  \event[4]{5}{Setup an automated testing framework}
+  \event[5]{8}{Explore unbiased ways to mix the training data}
+  \event[8]{11}{Explore different encodings, features and optimizers}
+  \event[11]{20}{Writing the thesis}
+\end{chronology}
+\caption{Timeline in weeks since the registration.}
+\label{timeline}
+\end{figure}
+
+\Cref{timeline} sketches how I plan to use the 20 weeks from the registration of the thesis to its deadline.

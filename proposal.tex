@@ -1,0 +1,121 @@
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+\newcommand{\proposalLanguage}{english}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+
+
+\documentclass[\proposalLanguage]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}                                    % Font encoding
+\usepackage{babel}                                          % Translation
+\usepackage{translations}                                   % Translation
+\usepackage[babel]{csquotes}                                % Quotes
+\usepackage{newtxtext,newtxmath}                            % Times font
+\usepackage{microtype}                                      % Typographical improvements
+\usepackage{ellipsis}                                       % Whitespace correction
+\usepackage{chronology}
+\usepackage[hyphens]{url}                                   % Hyphens in URLs
+\usepackage{hyperref}                                       % Clickable references
+\usepackage[noabbrev]{cleveref}
+\usepackage{geometry}
+\usepackage{booktabs}                                       % Improved tables
+\usepackage[backend=biber,					% Backend
+            bibencoding=utf8,				% File encoding (BibTeX = ASCII, Biber = UTF8)
+            bibstyle=authoryear,		    % Reference style
+            citestyle=authoryear,           % Citation style
+            bibwarn=true,                   % Enable warnings
+            natbib=true,					% Natbib compatibility
+            maxcitenames=2,					% Cite : > 2 name = et al.
+            maxbibnames=99,					% Bib  : show all names
+            sortcites=true,					% Sorting
+            block=space,					% Space between citations
+            giveninits=true,				% Compress first names
+            uniquename=false,				% Compatible with 'giveninits=true'
+            isbn=false,                     % Disable ISBN
+            doi=false                       % Disable DOI
+           ]{biblatex}
+\usepackage{lipsum}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Edit these according to your needs
+
+% Uncomment the correct type of the thesis. Also check the language setting at the top of this file.
+%\newcommand{\thesisType}{<Thesis Type>}
+\newcommand{\thesisType}{Bachelor's Thesis}
+%\newcommand{\thesisType}{Master's Thesis}
+
+%\title{<Thesis Topic>}
+\title{Realtime Pathtracing of Complex Lighting Scenarios using Bidirectional Neural Radiance Caching}
+
+\author{Julian C. Stamm}
+\newcommand{\matrNr}{3398674}
+
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generate author and title
+\makeatletter
+
+
+
+% The literature file
+\addbibresource{tex/literature.bib}
+
+
+
+\input{tex/lang/english}
+\input{tex/lang/german}
+
+
+
+\begin{document}
+
+{
+    \begin{center}
+        \LARGE \GetTranslation{proposal-header} \thesisType: \\ \@title
+    \end{center}
+    \begin{center}
+        \large\@author \\
+        \large \GetTranslation{proposal-matriculation-number}: \matrNr
+    \end{center}
+    \begin{center}
+        \large \@date
+    \end{center}
+}
+
+\vspace{1cm}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+% Edit the content of the respectively used file
+\ifcurrentbaselanguage{English}{\input{tex/content_english}}{}
+\ifcurrentbaselanguage{German}{\input{tex/content_german}}{}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+\printbibliography
+
+\vspace{2cm}
+
+\begin{center}
+    \begin{tabular}{lp{0cm}cp{1.1cm}c}
+        \large \GetTranslation{proposal-student}: && \hspace{4.5cm} && \hspace{4.5cm} \\
+        \cline{3-3}\cline{5-5}
+        \addlinespace
+        && \GetTranslation{proposal-location-date} && \GetTranslation{proposal-signature} \\
+        \vspace{2cm} \\
+        \large \GetTranslation{proposal-first-reviewer}: && \hspace{4.5cm} && \hspace{4.5cm} \\
+        \cline{3-3}\cline{5-5}
+        \addlinespace
+        && \GetTranslation{proposal-location-date} && \GetTranslation{proposal-signature}
+    \end{tabular}
+\end{center}
+
+
+\end{document}
